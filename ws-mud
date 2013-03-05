@@ -5,13 +5,14 @@ die "You need to run 'git submodule update --init' to fetch the example requirem
   unless -d "$FindBin::Bin/mojo/lib";
 
 use lib "$FindBin::Bin/mojo/lib";
-
+use lib "lib";
 
 use Mojolicious::Lite;
+use WSMud;
+
 @ARGV = qw( daemon ) unless @ARGV;
 
-my $players = {};
-
+my $world = WSMud::World->new();
 
 get '/' => sub {
   my $self = shift;
@@ -28,49 +29,7 @@ get '/player/:player_name' => sub {
 websocket '/mud/:player_name' => sub {
   my $self = shift;
   Mojo::IOLoop->stream($self->tx->connection)->timeout(300);
-  app->log->debug(sprintf 'Client connected: %s', $self->tx);
- 
-  my $id = $self->param('player_name');
-  my $json = Mojo::JSON->new;
-  
-  if ($players->{$id}) {
-    my $json = Mojo::JSON->new;
-    $self->tx->send($json->encode({text => "User $id already exists, please choose another one."}));
-#FIXME:This is a bad hack because I'm asleep. What this code must do is not to disconnect the legitimate user.
-    $id = 'duplicated user';
-    $self->finish;
-  } else { 
-    for (keys %$players) {
-      $players->{$_}->send($json->encode({text => "$id enters the game."}));
-    }  
-  }
-  
-  $players->{$id} = $self->tx;
-
-  $self->on(message =>
-    sub {
-      my ($self, $msg) = @_;
-
-      my $json = Mojo::JSON->new;      
-
-      for (keys %$players) {
-        $players->{$_}->send($json->encode({text => "[$id]: $msg"}));
-      }
-    }
-  );
-
-  $self->on(finish =>
-    sub {
-      app->log->debug('Client disconnected');
-      my $json = Mojo::JSON->new;
-
-      for (keys %$players) {
-        $players->{$_}->send($json->encode({text => "$id left the game."}));
-      } 
-      
-      delete $players->{$id};
-    }
-  );
+  my $player = WSMud::Player->new($self->param('player_name'), $world, $self);
 };
 
 
