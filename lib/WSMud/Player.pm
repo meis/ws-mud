@@ -77,9 +77,13 @@ sub do_action
   				$self->notify(tpye => 'message', text => "You say: $msg");	  				
   				$self->notify_world(tpye => 'message', text => "$me says: $msg");	
   			}
+  			when('move') 
+  			{
+  				$self->notify(type => 'message', text => "In progress.");		
+  			}
   			default
   			{
-  				$self->notify(type => 'error', text => "Command not found. Try 'help'");
+  				$self->notify(type => 'error', text => "Command not found. Try 'help'.");
   			}
   		}
   				

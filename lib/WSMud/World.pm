@@ -21,7 +21,7 @@ sub join
     return -1;
   } else { 
     $self->add_player($player);
-    $self->notify("god", type => 'message', text => "$player_name enters the game.");
+    $self->notify(null, type => 'message', text => "$player_name enters the game.");
   }
 }
 
@@ -29,7 +29,7 @@ sub left
 {
   my ($self, $player) = @_;  
   
-  $self->notify("god", type => 'message', text => "$player->{name} left the game.");
+  $self->notify(null, type => 'message', text => "$player->{name} left the game.");
   $self->rem_player($player);
 }
 
