@@ -11,13 +11,17 @@ sub encode
   my $self = shift;
   my $json = Mojo::JSON->new;
   
-  $notification = { type => $self->{type}, text => $self->{text} };  
+  my $notification = { type => $self->{type}, text => $self->{text} };  
   return $json->encode($notification);
 }
 
 sub decode
 {
+  my $self = shift;  
+  my $notification = shift;
   
+  my $json = Mojo::JSON->new;
+  return $json->decode($notification);  
 }
 
 1;

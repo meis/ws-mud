@@ -26,7 +26,8 @@
 
         $('#msg').keydown(function (e) {
           if (e.keyCode == 13 && $('#msg').val()) {
-            ws.send($('#msg').val());
+          	var cmd = JSON.stringify({"type": "cmd", "text": $('#msg').val()});
+            ws.send(cmd);
             $('#msg').val('');
           }
         });
