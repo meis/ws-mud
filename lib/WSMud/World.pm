@@ -1,7 +1,5 @@
 package WSMud::World;
 
-use feature 'switch';
-
 sub new
 {
   my $class = shift;
@@ -101,69 +99,7 @@ sub notify_room
 
 sub dispatch_action
 {
-  my $self    			= shift;  
-  my $player        = shift;
-  my $notification	= WSMud::Notification->decode(shift);
-  
-  my $type 	= $notification->{type};
-  
-  my @call = split(" ", $notification->{text});
-  
-  for ($type)
-  {
-  	when('cmd')
-  	{
-  		for ($call[0])
-  		{
-  			when('help') 
-  			{
-  				$player->notify(type => 'message', text => "Available commands: help say move look quit.");		
-  			}
-  			when('say') 
-  			{
-  				$self->action_say($player, @call);	
-  			}
-  			when('move') 
-  			{
-  				$self->action_move($player, @call);
-  			}
-  			when('look') 
-  			{
-  				$self->action_look($player, @call);
-  			}  			
-  			when('quit') 
-  			{
-  				$self->left($player);	
-  			}
-  			default
-  			{
-  				$self->notify_player($player, type => 'error', text => "Command not found. Try 'help'.");
-  			}
-  		}
-  				
-  	}
-  }
-}
-
-sub action_say
-{
-	my ($self, $player, @call) = @_;
-	shift @call;
-	my $msg = join(" ", @call);
-	$self->notify_player($player, type => 'message', text => "You say: $msg");	  				
-	$self->notify_all($player, type => 'message', text => "$player->{name} says: $msg");
-}
-
-sub action_look 
-{	
-  my ($self, $player, @call) = @_;
-	$self->notify_player($player, type => 'message', text => "Beautiful room. In progress.");
-}
-
-sub action_move
-{
-  my ($self, $player, @call) = @_;
-	$self->notify_player($player, type => 'message', text => "In progress.");
+	WSMud::Action->dispatch(@_);
 }
 
 # This is a test subroutine which creates a sample map.
