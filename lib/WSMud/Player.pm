@@ -13,8 +13,7 @@ sub new
    
   $self->{world}->join($self);
     
-  $self->init_connection;
-    
+  $self->init_connection;    
   
   return $self;
 }
@@ -46,7 +45,7 @@ sub notify
 sub disconnect
 {
   my $self = shift;
-
+  
   $self->{connection}->finish;
 }
 
