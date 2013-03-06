@@ -21,7 +21,7 @@ sub join
     return -1;
   } else { 
     $self->add_player($player);
-    $self->notify("$player_name enters the game.");
+    $self->notify(tpye => 'message', text => "$player_name enters the game.");
   }
 }
 
@@ -29,15 +29,15 @@ sub left
 {
   my ($self, $player) = @_;  
   
-  $self->notify("$player->{name} left the game.");
+  $self->notify(tpye => 'message', text => "$player->{name} left the game.");
   $self->rem_player($player);
 }
 
 sub notify
 {
-  my ($self, $text) = @_;
+  my ($self, %attrs) = @_;
   for (keys %$self->{online_players}) { 
-    $self->{online_players}->{$_}->notify($text);
+    $self->{online_players}->{$_}->notify(%attrs);
   } 
 }
 

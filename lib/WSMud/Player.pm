@@ -35,27 +35,28 @@ sub init_connection
 
 sub notify
 { 
-  my $self = shift;
-  my $text = shift;
-  my $json = Mojo::JSON->new;
-  $self->{connection}->send($json->encode({text => "$text"}));
+  my ($self, %attrs) = @_;
+
+  my $notification = WSMud::Notification->new(%attrs);
+  $self->{connection}->send($notification->encode);
 }
 
 
 sub do_action
 {
   my $self    = shift;  
-  my $msg     = shift;    
-
-  $self->{world}->notify("$self->{name} says: $msg");   
-  $self->notify("You say: $msg");  
+  my $msg     = shift;      
+  
+  $self->{world}->notify(tpye => 'message', text => "$self->{name} says: $msg");
+  $self->notify(tpye => 'message', text => "You say: $msg");    
 }
 
 sub emergency_exit
 {
   my $self = shift;
   my $text = shift;
-  $self->notify($text);
+  
+  $self->notify(tpye => 'message', text => $text);
   $self->{connection}->on(finish => sub {return 0});
   $self->{connection}->finish;
 }
@@ -63,7 +64,8 @@ sub emergency_exit
 sub exit
 {
   my $self = shift;
-  $self->notify("Goodbye");
+  
+  $self->notify(tpye => 'message', text => "Goodbye");
   $self->{world}->left($self);   
   $self->{connection}->finish;
 }
