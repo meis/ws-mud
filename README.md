@@ -19,7 +19,13 @@ You can start the server using:
 perl ws-mud
 ```
 
-Then, you can start playing going to http://localhost:3000/player/your_name (Next comming...login screen!)
+Then, you can start playing going to http://localhost:3000/player/your_name (Next comming...login screen!).
+
+If you don't know what to do..try to type 'help'.
+
+##IS MULTIPLAYER
+
+Yes, you can open more tabs and login with another player.
 
 
 
