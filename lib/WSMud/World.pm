@@ -7,9 +7,12 @@ sub new
   my $class = shift;
   my $self = {
     $online_players => {},
+    @map => []
   };
   
   bless $self;
+  
+  $self->populate_map;
   return $self;
 }
 
@@ -81,9 +84,6 @@ sub notify_all
 {
   my ($self, $player, %notification) = @_;
   
-#  for (keys %$self->{online_players}) { 
-#    $self->{online_players}->{$_}->notify(%notification) unless ($_ eq $player);
-#  } 
   for (values %$self->{online_players}) { 
     $self->notify_player($_, %notification) unless ($_ eq $player);
   }   
@@ -121,18 +121,15 @@ sub dispatch_action
   			}
   			when('say') 
   			{
-  				shift @call;
-  				my $msg = join(" ", @call);
-  				$self->notify_player($player, type => 'message', text => "You say: $msg");	  				
-  				$self->notify_all($player, type => 'message', text => "$player->{name} says: $msg");	
+  				$self->action_say($player, @call);	
   			}
   			when('move') 
   			{
-  				$self->notify_player($player, type => 'message', text => "In progress.");		
+  				$self->action_move($player, @call);
   			}
   			when('look') 
   			{
-  				$self->notify_player($player, type => 'message', text => "Beautiful room. In progress.");		
+  				$self->action_look($player, @call);
   			}  			
   			when('quit') 
   			{
@@ -148,5 +145,57 @@ sub dispatch_action
   }
 }
 
+sub action_say
+{
+	my ($self, $player, @call) = @_;
+	shift @call;
+	my $msg = join(" ", @call);
+	$self->notify_player($player, type => 'message', text => "You say: $msg");	  				
+	$self->notify_all($player, type => 'message', text => "$player->{name} says: $msg");
+}
+
+sub action_look 
+{	
+  my ($self, $player, @call) = @_;
+	$self->notify_player($player, type => 'message', text => "Beautiful room. In progress.");
+}
+
+sub action_move
+{
+  my ($self, $player, @call) = @_;
+	$self->notify_player($player, type => 'message', text => "In progress.");
+}
+
+# This is a test subroutine which creates a sample map.
+sub populate_map
+{
+	my @map = [];
+
+	$map[1] = {
+		brief 			=> 'Green room',
+		description	=> 'This is a big green room. Everithing in the room is green.',
+		exits				=> {'n' => 2, 'e' => 4}
+	};
+
+	$map[2] = {
+		brief 			=> 'Red room',
+		description	=> 'This is a big red room. Everithing in the room is red.',
+		exits				=> {'s' => 1, 'e' => 3}
+	};
+
+	$map[3] = {
+		brief 			=> 'Blue room',
+		description	=> 'This is a big blue room. Everithing in the room is blue.',
+		exits				=> {'w' => 2, 's' => 4}
+	};
+
+	$map[4] = {
+		brief 			=> 'Yellow room',
+		description	=> 'This is a big yellow room. Everithing in the room is yellow.',
+		exits				=> {'w' => 1, 'n' => 3}
+	};
+	
+	$self->{map} = @map;
+}
 
 1;
