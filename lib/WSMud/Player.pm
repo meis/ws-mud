@@ -38,22 +38,17 @@ sub init_connection
 sub notify
 { 
   my ($self, %attrs) = @_;
-
   my $notification = WSMud::Notification->new(%attrs);
+  
   $self->{connection}->send($notification->encode);
 }
 
 sub notify_world
 { 
   my ($self, %attrs) = @_;
-
-  #my $notification = WSMud::Notification->new(%attrs);
   
   $self->{world}->notify($self->{name}, %attrs);
-  
-  #$self->{connection}->send($notification->encode);
 }
-
 
 sub do_action
 {
@@ -73,7 +68,7 @@ sub do_action
   		{
   			when('help') 
   			{
-  				$self->notify(tpye => 'message', text => "Available commands: help say.");		
+  				$self->notify(type => 'message', text => "Available commands: help say.");		
   			}
   			when('say') 
   			{
@@ -84,14 +79,12 @@ sub do_action
   			}
   			default
   			{
-  				$self->notify(tpye => 'error', text => "Command not found. Try 'help'");
+  				$self->notify(type => 'error', text => "Command not found. Try 'help'");
   			}
   		}
   				
   	}
   }
-  
-  #$self->{world}->notify(tpye => 'message', text => "$self->{name} says: $cmd->{text}");
 }
 
 sub emergency_exit
