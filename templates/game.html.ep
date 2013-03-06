@@ -1,7 +1,9 @@
 <html>
   <head>
     <title>WebSocket Mud Client</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script type="text/javascript">
       $(function () {
         $('#msg').focus();
@@ -34,7 +36,7 @@
       });
     </script>
     <style type="text/css">
-      textarea {
+      textarea, input{
           width: 40em;
           height:10em;
       }
@@ -42,8 +44,7 @@
   </head>
   
   <body>
-
-    <h1><%= $player_name %></h1>
+    <h1><%= $player_name %></h1>   
 
     <textarea id="log" readonly></textarea>
     <p><input type="text" id="msg" /></p>
