@@ -1,4 +1,28 @@
 ws-mud
 ======
 
-An attempt to create a tiny mud-like game with WebSockets
+An attempt to create a tiny mud-like game with WebSockets.
+
+It doesen't implement any persistence, so the players are created and destroyed on each connection.
+
+##INSTALL
+
+Clone this repo and download the 'Mojo' dependencies
+```
+git submodules init
+git submodules update
+```
+##USAGE
+
+You can start the server using:
+```
+perl ws-mud
+```
+
+Then, you can start playing going to http://localhost:3000/player/your_name (Next comming...login screen!)
+
+
+
+
+
+
