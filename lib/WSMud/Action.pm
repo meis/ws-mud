@@ -62,7 +62,7 @@ sub action_say
 	shift @call;
 	my $msg = join(" ", @call);
 	$world->notify_player($player, type => 'message', text => "You say: $msg");	  				
-	$world->notify_all($player, type => 'message', text => "$player->{name} says: $msg");
+	$world->notify_room($player, type => 'message', text => "$player->{name} says: $msg");
 }
 
 sub action_look 

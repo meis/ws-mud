@@ -32,7 +32,7 @@ sub join
     $self->add_player($player);
     $self->notify_player($player, type => 'error', text => "Welcome to the game.");
     $self->notify_player($player, type => 'error', text => "If you don't know what to do, type 'help'");
-    $self->notify_all($player, type => 'message', text => "$player_name enters the game.");
+    $self->notify_all($player, type => 'message', text => "[$player_name enters the game.]");
     $self->enter_room($player, $self->initial_room($player));
   }
 }
@@ -42,7 +42,7 @@ sub left
   my ($self, $player) = @_;  
   
   $self->notify_player($player, type => 'message', text => "Goodbye");
-  $self->notify_all(null, type => 'message', text => "$player->{name} left the game.");
+  $self->notify_all(null, type => 'message', text => "[$player->{name} left the game.]");
   $self->rem_player($player);
   $self->disconnect($player)
 }
@@ -82,13 +82,25 @@ sub initial_room
 sub players_in_room
 {
   my ($self, $room) = @_;
-  $self->{online_players};
+  
+  my @players = ();
+  
+  for (values %{$self->{online_players}}) 
+  {   
+		my $player = $_;
+   
+#  	if ($self->{positions}{$_->{name}} == $room->‏{id})
+#  	{
+  		push(@players, $_);
+#  		$players[0] = $player;
+#  	}
+  }
+  return @players;
 }
 
 sub enter_room
 {
   my ($self, $player, $room) = @_;
-
   
   $self->update_position($player, $room);
   $self->notify_player($player, type => 'room:glance', text => $room->glance);
@@ -97,6 +109,7 @@ sub enter_room
 
 sub move
 {
+	my ($self, $player, $direction) = @_;
 }
 
 sub update_position 
@@ -117,7 +130,7 @@ sub notify_all
 {
   my ($self, $player, %notification) = @_;
   
-  for (values %$self->{online_players}) 
+  for (values %{$self->{online_players}}) 
   { 
     $self->notify_player($_, %notification) unless ($_ eq $player);
   }   
@@ -128,18 +141,21 @@ sub notify_room
 {
   my ($self, $player, %notification) = @_;
   
-  for (keys %$self->{online_players}) 
+  %players = $self->players_in_room($room);
+  for (values %players)
   { 
-    $self->{online_players}->{$_}->notify(%notification) unless ($_ == $player);
-  }
+    $self->notify_player($_, %notification) unless ($_ eq $player);
+  }   
 }
 
 sub notify_players_in_room
 {
   my ($self, $player, $room) = @_;
-  for (values %{$self->players_in_room($room)})
+
+	%players = $self->players_in_room($room);
+  for (values %players)
   {
-    $self->notify_player($player, type => 'room:glance', text => "$_->{name} is here.") unless ($_ eq $player);
+    $self->notify_player($player, type => 'room:players', text => "$_->{name} is here.") unless ($_ eq $player);
   }
 }
 
