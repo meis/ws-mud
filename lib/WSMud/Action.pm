@@ -74,7 +74,7 @@ sub action_look
 sub action_move
 {
   my ($self, $world, $player, @call) = @_;
-	$world->notify_player($player, type => 'message', text => "In progress.");
+  $world->move($player, $call[1]);
 }
 
 sub action_quit

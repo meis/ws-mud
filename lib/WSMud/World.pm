@@ -4,7 +4,7 @@ sub new
 {
   my $class = shift;
   my $self = {
-    $online_players => {},
+    %online_players => {},
     @zone_map => [],
     %positions = {},
   };
@@ -110,6 +110,27 @@ sub enter_room
 sub move
 {
 	my ($self, $player, $direction) = @_;
+	
+	if ($direction)
+	{	
+	  my $position  = $self->{positions}{$player->{name}}; 
+	  my $room      = $self->{zone_map}[$position];
+	  
+	  if ($room->{exits}{$direction})
+	  {
+  	  $self->notify_room($player, type => 'message', text => "$player->{name} goes to $direction.");	  
+	    my $destination_room = $self->{zone_map}[$room->{exits}{$direction}];
+	    $self->enter_room($player, $destination_room);
+  	}
+  	else
+  	{
+  	  $self->notify_player($player, type => 'error', text => "There's no exit by that way");
+  	}
+	}
+	else
+	{
+    $self->notify_player($player, type => 'error', text => 'Move where??');
+	}
 }
 
 sub update_position 

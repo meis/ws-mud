@@ -11,7 +11,7 @@ sub glance
 {
   my $self = shift;
   
- $self->{brief} . ' [' . join(", ", keys %{$self->{exits}}) . ']';  
+  $self->{brief} . ' [' . join(", ", keys %{$self->{exits}}) . ']';  
 }
 
 sub look
