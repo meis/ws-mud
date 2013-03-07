@@ -5,12 +5,14 @@ sub new
   my $class = shift;
   my $self = {
     $online_players => {},
-    @map => []
+    @zone_map => [],
+    %positions = {},
   };
   
   bless $self;
   
   $self->populate_map;
+  	
   return $self;
 }
 
@@ -28,7 +30,10 @@ sub join
   else 
   { 
     $self->add_player($player);
+    $self->notify_player($player, type => 'error', text => "Welcome to the game.");
+    $self->notify_player($player, type => 'error', text => "If you don't know what to do, type 'help'");
     $self->notify_all($player, type => 'message', text => "$player_name enters the game.");
+    $self->enter_room($player, $self->initial_room($player));
   }
 }
 
@@ -66,9 +71,39 @@ sub is_online
   exists $self->{online_players}->{$player->{name}};
 }
 
+# As we don't have persistent layer we need to start ever at the same point.
+sub initial_room
+{
+  my ($self, $player) = @_;  
+ 
+  $self->{zone_map}[1];
+}
+
 sub players_in_room
 {
+  my ($self, $room) = @_;
   $self->{online_players};
+}
+
+sub enter_room
+{
+  my ($self, $player, $room) = @_;
+
+  
+  $self->update_position($player, $room);
+  $self->notify_player($player, type => 'room:glance', text => $room->glance);
+  $self->notify_players_in_room($player, $room);
+}
+
+sub move
+{
+}
+
+sub update_position 
+{
+  my ($self, $player, $room) = @_;
+  
+  $self->{positions}{$player->{name}} = $room->{id};
 }
 
 sub notify_player 
@@ -82,7 +117,8 @@ sub notify_all
 {
   my ($self, $player, %notification) = @_;
   
-  for (values %$self->{online_players}) { 
+  for (values %$self->{online_players}) 
+  { 
     $self->notify_player($_, %notification) unless ($_ eq $player);
   }   
 }
@@ -92,8 +128,18 @@ sub notify_room
 {
   my ($self, $player, %notification) = @_;
   
-  for (keys %$self->{online_players}) { 
+  for (keys %$self->{online_players}) 
+  { 
     $self->{online_players}->{$_}->notify(%notification) unless ($_ == $player);
+  }
+}
+
+sub notify_players_in_room
+{
+  my ($self, $player, $room) = @_;
+  for (values %{$self->players_in_room($room)})
+  {
+    $self->notify_player($player, type => 'room:glance', text => "$_->{name} is here.") unless ($_ eq $player);
   }
 }
 
@@ -103,35 +149,38 @@ sub dispatch_action
 }
 
 # This is a test subroutine which creates a sample map.
+#TODO: Use a graph-like objecto to store map.
 sub populate_map
 {
-	my @map = [];
+  my $self = shift;
 
-	$map[1] = {
+	$self->{zone_map}[1] = WSMud::Room->new(
+	  id          => 1,
 		brief 			=> 'Green room',
-		description	=> 'This is a big green room. Everithing in the room is green.',
+		description	=> 'This is a big green room. Everything in the room is green.',
 		exits				=> {'n' => 2, 'e' => 4}
-	};
+	);
 
-	$map[2] = {
+	$self->{zone_map}[2] = WSMud::Room->new(
+	  id          => 2,
 		brief 			=> 'Red room',
-		description	=> 'This is a big red room. Everithing in the room is red.',
+		description	=> 'This is a big red room. Everything in the room is red.',
 		exits				=> {'s' => 1, 'e' => 3}
-	};
+	);
 
-	$map[3] = {
+	$self->{zone_map}[3] = WSMud::Room->new(
+	  id          => 3,
 		brief 			=> 'Blue room',
-		description	=> 'This is a big blue room. Everithing in the room is blue.',
+		description	=> 'This is a big blue room. Everything in the room is blue.',
 		exits				=> {'w' => 2, 's' => 4}
-	};
+	);
 
-	$map[4] = {
+	$self->{zone_map}[4] = WSMud::Room->new(
+	  id          => 4,
 		brief 			=> 'Yellow room',
-		description	=> 'This is a big yellow room. Everithing in the room is yellow.',
+		description	=> 'This is a big yellow room. Everything in the room is yellow.',
 		exits				=> {'w' => 1, 'n' => 3}
-	};
-	
-	$self->{map} = @map;
+	);	
 }
 
 1;

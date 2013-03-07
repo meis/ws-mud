@@ -2,7 +2,7 @@ package WSMud::Action;
 
 use feature 'switch';
 
-#TODO: Need some metaprograming here...
+#TODO: Need some metaprograming or a way to register actions here...
 sub dispatch
 {
   my $self    			= shift;  
