@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <title>WebSocket Mud Client</title>
+    <script>ws_url='ws://localhost:3000/mud/<%= $player_name %>'</script>>
     <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">    
     <link href="/css/application.css" rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery.js"></script>
