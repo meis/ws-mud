@@ -12,7 +12,7 @@ $(function () {
     };
     
     ws.onclose = function () {
-      WSMud.trigger("connect");
+      WSMud.trigger("disconnect");
     };
 
     ws.onmessage = function (msg) {
@@ -85,7 +85,7 @@ $(function () {
   	if (ws.readyState == 1) 
   		ws.close();
   	else
-  		create_socket();    
+  		WSMud.create_socket();    
   });
   
   
