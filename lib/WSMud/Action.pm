@@ -53,7 +53,7 @@ sub dispatch
 sub action_help 
 {	
   my ($self, $world, $player, @call) = @_;
-	$world->notify_player($player, type => 'message', text => "Available commands: help say move look quit.");
+	$world->notify_player($player, type => 'help', text => "Available commands: help say move look quit.");
 }
 
 sub action_say

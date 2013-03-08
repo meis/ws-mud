@@ -32,7 +32,6 @@ websocket '/mud/:player_name' => sub {
   my $player = WSMud::Player->new($self->param('player_name'), $world, $self);
 };
 
-
 app->start;
 
 1;

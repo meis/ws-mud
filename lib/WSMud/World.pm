@@ -30,7 +30,7 @@ sub join
   else 
   { 
     $self->add_player($player);
-    $self->notify_player($player, type => 'message', text => "Welcome to the game.");
+    $self->notify_player($player, type => 'message', text => "Welcome to the game, ". $player_name . ".");
     $self->notify_player($player, type => 'message', text => "If you don't know what to do, type 'help'");
     $self->notify_all($player, type => 'message', text => "[$player_name enters the game.]");
     $self->enter_room($player, $self->initial_room($player));
@@ -42,7 +42,7 @@ sub left
   my ($self, $player) = @_;  
   
   $self->notify_player($player, type => 'message', text => "Goodbye");
-  $self->notify_all(null, type => 'message', text => "[$player->{name} left the game.]");
+  $self->notify_all(null, type => 'message', text => "[" . $player->{name}. " left the game.]");
   $self->rem_player($player);
   $self->disconnect($player)
 }

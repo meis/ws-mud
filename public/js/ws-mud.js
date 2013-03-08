@@ -10,7 +10,7 @@ $(function () {
 	var ws;
 	
 	function create_socket() {
-    ws = new WebSocket('ws://localhost:3000/mud/<%= $player_name %>');
+    ws = new WebSocket(ws_url);
     
     ws.onopen = function () {
       log({"text":"Connection opened","type":"message"});      
