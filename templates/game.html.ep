@@ -13,20 +13,27 @@
           $('#console').append("<span class='" + type.replace(":","-") + "'>" + text + '</span>');
           $('#console').scrollTop(300);
         };
-
-        var ws = new WebSocket('ws://localhost:3000/mud/<%= $player_name %>');
-        ws.onopen = function () {
-          log('Connection opened', 'message');
-        };
         
-        ws.onclose = function () {
-          log('Connection closed', 'message');
-        };
+				var ws;
+				
+				function create_socket() {
+		      ws = new WebSocket('ws://localhost:3000/mud/<%= $player_name %>');
+		      
+		      ws.onopen = function () {
+		        log('Connection opened', 'message');
+		        $('#connection-switcher span').html("Disconnect");
+		      };
+		      
+		      ws.onclose = function () {
+		        log('Connection closed', 'message');
+		        $('#connection-switcher span').html("Connect");
+		      };
 
-        ws.onmessage = function (msg) {
-          var res = JSON.parse(msg.data);
-          log(res.text, res.type); 
-        };
+		      ws.onmessage = function (msg) {
+		        var res = JSON.parse(msg.data);
+		        log(res.text, res.type); 
+		      };
+		    }
 
         $('#console-input').keydown(function (e) {
           if (e.keyCode == 13 && $('#console-input').val()) {
@@ -36,6 +43,15 @@
             $('#console-input').val('');
           }
         });
+        
+        $('#connection-switcher').click(function (e) {
+        	if (ws.readyState == 1) 
+        		ws.close();
+        	else
+        		create_socket();    
+        });
+        
+        create_socket();
       });
     </script>
     <style type="text/css">
@@ -100,7 +116,7 @@
           <div class="navbar-inner">
             <span class="brand"><%= $player_name %></span>
             <ul class="nav pull-right">
-              <li class="btn"><i class="icon-off"></i> Connect</li>
+              <li class="btn" id='connection-switcher'><i class="icon-off"></i> <span>Connect</li>
             </ul>
           </div>
       </div>
