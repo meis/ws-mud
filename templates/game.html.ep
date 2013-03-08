@@ -99,24 +99,23 @@
       <div class="navbar">
           <div class="navbar-inner">
             <span class="brand"><%= $player_name %></span>
-            <ul class="nav">
+            <ul class="nav pull-right">
               <li class="btn"><i class="icon-off"></i> Connect</li>
             </ul>
           </div>
       </div>
       <div class="row">
           <div class="span9">
-              <div id="console" class="wall box"></div>
-              <p><input type="text" id="console-input" /></p>
+              <div id="console" class="box"></div>
+              <input type="text" id="console-input" />
           </div>
-          <div class="span3">
-          
-          <div class="box">
-            <h3 class="box-title">Widget 1</h3>
-            <div class="box-content">
-              This is a test widget
-            </div>
-          </div>
+          <div class="span3">          
+		        <div class="box">
+		          <h3 class="box-title">Widget 1</h3>
+		          <div class="box-content">
+		            This is a test widget
+		          </div>
+		        </div>
           </div>
         </div>
       </div>
