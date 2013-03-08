@@ -114,8 +114,7 @@ sub enter_room
   my ($self, $player, $room) = @_;
   
   $self->update_position($player, $room);
-  $self->notify_player($player, type => 'room:glance', text => $room->glance);
-  $self->notify_players_in_room($player, $room);
+  $self->look_room($player);
 }
 
 sub look_room
@@ -126,6 +125,7 @@ sub look_room
   
   $self->notify_player($player, type => 'room:glance', text => $room->glance);
   $self->notify_player($player, type => 'room:look', text => $room->look);
+  $self->notify_players_in_room($player, $room);
 }
 
 sub move
