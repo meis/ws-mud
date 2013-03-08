@@ -68,7 +68,7 @@ sub action_say
 sub action_look 
 {	
   my ($self, $world, $player, @call) = @_;
-	$world->notify_player($player, type => 'message', text => "Beautiful room. In progress.");
+  $world->look_room($player);
 }
 
 sub action_move

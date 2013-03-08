@@ -18,7 +18,7 @@ sub look
 {
   my $self = shift;
   
-  $self->glance() . '\n' . $self->{description};  
+  $self->{description};  
 }
 
 1;

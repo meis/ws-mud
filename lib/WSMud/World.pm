@@ -106,6 +106,17 @@ sub enter_room
   $self->notify_players_in_room($player, $room);
 }
 
+sub look_room
+{
+  my ($self, $player) = @_;  
+  
+  my $position  = $self->{positions}{$player->{name}}; 
+	my $room      = $self->{zone_map}[$position];
+  
+  $self->notify_player($player, type => 'room:glance', text => $room->glance);
+  $self->notify_player($player, type => 'room:look', text => $room->look);
+}
+
 sub move
 {
 	my ($self, $player, $direction) = @_;
