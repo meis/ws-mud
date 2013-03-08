@@ -2,116 +2,15 @@
 <html lang="en">
   <head>
     <title>WebSocket Mud Client</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">    
+    <link href="/css/application.css" rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-      $(function () {
-        $('#console-input').focus();
-
-        var log = function (text, type) {
-          $('#console').append("<span class='" + type.replace(":","-") + "'>" + text + '</span>');
-          $('#console').scrollTop(300);
-        };
-        
-				var ws;
-				
-				function create_socket() {
-		      ws = new WebSocket('ws://localhost:3000/mud/<%= $player_name %>');
-		      
-		      ws.onopen = function () {
-		        log('Connection opened', 'message');
-		        $('#connection-switcher span').html("Disconnect");
-		      };
-		      
-		      ws.onclose = function () {
-		        log('Connection closed', 'message');
-		        $('#connection-switcher span').html("Connect");
-		      };
-
-		      ws.onmessage = function (msg) {
-		        var res = JSON.parse(msg.data);
-		        log(res.text, res.type); 
-		      };
-		    }
-
-        $('#console-input').keydown(function (e) {
-          if (e.keyCode == 13 && $('#console-input').val()) {
-          	var cmd = JSON.stringify({"type": "cmd", "text": $('#console-input').val()});
-            ws.send(cmd);
-            log('> ' + $('#console-input').val(), 'echo');
-            $('#console-input').val('');
-          }
-        });
-        
-        $('#connection-switcher').click(function (e) {
-        	if (ws.readyState == 1) 
-        		ws.close();
-        	else
-        		create_socket();    
-        });
-        
-        create_socket();
-      });
-    </script>
-    <style type="text/css">
-      body {
-        background-color: #F7F7F9;
-        padding: 2em;
-      }
-      .box {      
-        background-clip: padding-box;
-        background-color: #FFFFFF;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        border-radius: 6px 6px 6px 6px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        left: 0;
-        padding: 1px;
-        text-align: left;
-        top: 0;
-        white-space: normal;
-      }
-      .box-title {
-        background-color: #F7F7F7;
-        border-bottom: 1px solid #EBEBEB;
-        border-radius: 5px 5px 0 0;
-        font-size: 14px;
-        font-weight: normal;
-        line-height: 18px;
-        margin: 0;
-        padding: 8px 14px;
-      }
-      .box-content {
-        padding: 9px 14px;
-      }
-      #console-input{
-        width: 99%;
-      }
-      #console {
-      	min-height: 300px;
-      	height: 300px;
-      	background-color: #eee;
-      	overflow-y: scroll;
-      	margin-bottom: 2em;
-      	padding: 1em;
-      }
-      #console span {
-      	display: block;
-      }
-      #console span.room-glance {
-      	font-weight: bold;
-      }
-      #console span.error {
-      	color: #A60000;
-      }
-      #console span.echo {
-      	color: #FFC700;
-      }
-    </style>
+    <script src="/js/bootstrap.min.js"></script>    
+    <script src="/js/ws-mud.js"></script>
   </head>
   
   <body class="row">
-    <div id="wrapper" class="container wall">
+    <div id="wrapper" class="container">
       <div class="navbar">
           <div class="navbar-inner">
             <span class="brand"><%= $player_name %></span>
@@ -121,21 +20,19 @@
           </div>
       </div>
       <div class="row">
-          <div class="span9">
-              <div id="console" class="box"></div>
-              <input type="text" id="console-input" />
-          </div>
-          <div class="span3">          
-		        <div class="box">
-		          <h3 class="box-title">Widget 1</h3>
-		          <div class="box-content">
-		            This is a test widget
-		          </div>
-		        </div>
-          </div>
+        <div class="span9">
+            <div id="console" class="box"></div>
+            <input type="text" id="console-input" />
+        </div>
+        <div class="span3">          
+	        <div class="box">
+	          <h3 class="box-title">Widget 1</h3>
+	          <div class="box-content">
+	            This is a test widget
+	          </div>
+	        </div>
         </div>
       </div>
-    
-
+    </div>
   </body>
 </html>
