@@ -160,11 +160,11 @@ sub from_direction
   my ($self, $origin_room, $destination_room) = @_;
   
   my $direction = "nowhere";
-  my %exits = %{$origin_room->{exits}};
-   
+  my %exits = %{$destination_room->{exits}};
+  
   for (keys %exits) 
   {
-    if ($exits[$_] == $destination_room->{id}) 
+    if ($exits{$_} == $origin_room->{id}) 
     {
       $direction = $_;
     }
