@@ -41,7 +41,7 @@ sub left
 {
   my ($self, $player) = @_;  
   
-  $self->notify_player($player, type => 'message', text => "Goodbye");
+  $self->notify_player($player, type => 'message', text => "Goodbye.");
   $self->notify_all(null, type => 'message', text => "[" . $player->{name}. " left the game.]");
   $self->rem_player($player);
   $self->disconnect($player)
