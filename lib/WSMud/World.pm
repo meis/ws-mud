@@ -89,11 +89,10 @@ sub players_in_room
   {   
 		my $player = $_;
    
-#  	if ($self->{positions}{$_->{name}} == $room->‏{id})
-#  	{
+    if ($self->{positions}{$_->{name}} == $room->{id})
+  	{
   		push(@players, $_);
-#  		$players[0] = $player;
-#  	}
+  	}
   }
   return @players;
 }
@@ -121,6 +120,8 @@ sub move
   	  $self->notify_room($player, type => 'message', text => "$player->{name} goes to $direction.");	  
 	    my $destination_room = $self->{zone_map}[$room->{exits}{$direction}];
 	    $self->enter_room($player, $destination_room);
+	    
+	    $self->notify_room($player, type => 'message', text => "$player->{name} arrives from $direction.");	
   	}
   	else
   	{
@@ -162,8 +163,11 @@ sub notify_room
 {
   my ($self, $player, %notification) = @_;
   
-  %players = $self->players_in_room($room);
-  for (values %players)
+  my $room_id = $self->{positions}{$player->{name}};
+  my $room    = $self->{zone_map}[$room_id];
+  my @players = $self->players_in_room($room); 
+  
+  for (values @players)
   { 
     $self->notify_player($_, %notification) unless ($_ eq $player);
   }   
@@ -173,8 +177,9 @@ sub notify_players_in_room
 {
   my ($self, $player, $room) = @_;
 
-	%players = $self->players_in_room($room);
-  for (values %players)
+  @players = $self->players_in_room($room);  
+
+  for (values @players)
   {
     $self->notify_player($player, type => 'room:players', text => "$_->{name} is here.") unless ($_ eq $player);
   }
@@ -182,7 +187,7 @@ sub notify_players_in_room
 
 sub dispatch_action
 {
-	WSMud::Action->dispatch(@_);
+  WSMud::Action->dispatch(@_);
 }
 
 # This is a test subroutine which creates a sample map.
