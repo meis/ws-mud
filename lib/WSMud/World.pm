@@ -142,7 +142,7 @@ sub move
 	    my $destination_room = $self->get_room($room->{exits}{$direction});
 	    $self->enter_room($player, $destination_room);
 	    
-	    $self->notify_room($player, type => 'message', text => "$player->{name} arrives from $direction.");	
+	    $self->notify_room($player, type => 'message', text => "$player->{name} arrives from " . $self->from_direction($room, $destination_room) . ".");	
   	}
   	else
   	{
@@ -153,6 +153,24 @@ sub move
 	{
     $self->notify_player($player, type => 'error', text => 'Move where??');
 	}
+}
+
+sub from_direction
+{
+  my ($self, $origin_room, $destination_room) = @_;
+  
+  my $direction = "nowhere";
+  my %exits = %{$origin_room->{exits}};
+   
+  for (keys %exits) 
+  {
+    if ($exits[$_] == $destination_room->{id}) 
+    {
+      $direction = $_;
+    }
+  }
+  
+  return $direction;
 }
 
 sub update_position 
