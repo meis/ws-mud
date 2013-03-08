@@ -30,8 +30,8 @@ sub join
   else 
   { 
     $self->add_player($player);
-    $self->notify_player($player, type => 'error', text => "Welcome to the game.");
-    $self->notify_player($player, type => 'error', text => "If you don't know what to do, type 'help'");
+    $self->notify_player($player, type => 'message', text => "Welcome to the game.");
+    $self->notify_player($player, type => 'message', text => "If you don't know what to do, type 'help'");
     $self->notify_all($player, type => 'message', text => "[$player_name enters the game.]");
     $self->enter_room($player, $self->initial_room($player));
   }
