@@ -79,6 +79,20 @@ sub initial_room
   $self->{zone_map}[1];
 }
 
+sub get_player_room
+{
+   my ($self, $player) = @_;
+   
+   $self->get_room($self->{positions}{$player->{name}});
+}
+
+sub get_room
+{
+   my ($self, $room_id) = @_;
+   
+   $self->{zone_map}[$room_id];	 
+}
+
 sub players_in_room
 {
   my ($self, $room) = @_;
@@ -86,10 +100,8 @@ sub players_in_room
   my @players = ();
   
   for (values %{$self->{online_players}}) 
-  {   
-		my $player = $_;
-   
-    if ($self->{positions}{$_->{name}} == $room->{id})
+  {      
+    if ($self->get_player_room($_) == $room)
   	{
   		push(@players, $_);
   	}
@@ -108,10 +120,9 @@ sub enter_room
 
 sub look_room
 {
-  my ($self, $player) = @_;  
+  my ($self, $player) = @_;   
   
-  my $position  = $self->{positions}{$player->{name}}; 
-	my $room      = $self->{zone_map}[$position];
+	my $room = $self->get_player_room($player);
   
   $self->notify_player($player, type => 'room:glance', text => $room->glance);
   $self->notify_player($player, type => 'room:look', text => $room->look);
@@ -123,13 +134,12 @@ sub move
 	
 	if ($direction)
 	{	
-	  my $position  = $self->{positions}{$player->{name}}; 
-	  my $room      = $self->{zone_map}[$position];
+	  my $room = $self->get_player_room($player);
 	  
 	  if ($room->{exits}{$direction})
 	  {
   	  $self->notify_room($player, type => 'message', text => "$player->{name} goes to $direction.");	  
-	    my $destination_room = $self->{zone_map}[$room->{exits}{$direction}];
+	    my $destination_room = $self->get_room($room->{exits}{$direction});
 	    $self->enter_room($player, $destination_room);
 	    
 	    $self->notify_room($player, type => 'message', text => "$player->{name} arrives from $direction.");	
