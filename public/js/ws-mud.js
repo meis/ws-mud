@@ -1,8 +1,9 @@
 $(function () {
   $('#console-input').focus();
 
-  var log = function (text, type) {
-    $('#console').append("<span class='" + type.replace(":","-") + "'>" + text + '</span>');
+  var log = function (notification) {  
+  	var color = (notification.color? "style='color:" + notification.color + "'": "");
+    $('#console').append("<span " + color + "class='" + notification.type.replace(":","-") + "'>" + notification.text + '</span>');
     $('#console').scrollTop(300);
   };
   
@@ -12,18 +13,18 @@ $(function () {
     ws = new WebSocket('ws://localhost:3000/mud/<%= $player_name %>');
     
     ws.onopen = function () {
-      log('Connection opened', 'message');
+      log({"text":"Connection opened","type":"message"});      
       $('#connection-switcher span').html("Disconnect");
     };
     
     ws.onclose = function () {
-      log('Connection closed', 'message');
+      log({"text":"Connection closed","type":"message"});
       $('#connection-switcher span').html("Connect");
     };
 
     ws.onmessage = function (msg) {
       var res = JSON.parse(msg.data);
-      log(res.text, res.type); 
+      log(res); 
     };
   }
 
@@ -31,7 +32,7 @@ $(function () {
     if (e.keyCode == 13 && $('#console-input').val()) {
     	var cmd = JSON.stringify({"type": "cmd", "text": $('#console-input').val()});
       ws.send(cmd);
-      log('> ' + $('#console-input').val(), 'echo');
+      log({"text":'> ' + $('#console-input').val(),"type":"echo"});
       $('#console-input').val('');
     }
   });

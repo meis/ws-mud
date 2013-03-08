@@ -123,7 +123,7 @@ sub look_room
   
 	my $room = $self->get_player_room($player);
   
-  $self->notify_player($player, type => 'room:glance', text => $room->glance);
+  $self->notify_player($player, type => 'room:glance', text => $room->glance, color => $room->{color});
   $self->notify_player($player, type => 'room:look', text => $room->look);
   $self->notify_players_in_room($player, $room);
 }
@@ -239,6 +239,7 @@ sub populate_map
 	  id          => 1,
 		brief 			=> 'Green room',
 		description	=> 'This is a big green room. Everything in the room is green.',
+		color				=> 'green',
 		exits				=> {'n' => 2, 'e' => 4}
 	);
 
@@ -246,6 +247,7 @@ sub populate_map
 	  id          => 2,
 		brief 			=> 'Red room',
 		description	=> 'This is a big red room. Everything in the room is red.',
+		color				=> 'red',
 		exits				=> {'s' => 1, 'e' => 3}
 	);
 
@@ -253,13 +255,15 @@ sub populate_map
 	  id          => 3,
 		brief 			=> 'Blue room',
 		description	=> 'This is a big blue room. Everything in the room is blue.',
+		color				=> 'blue',
 		exits				=> {'w' => 2, 's' => 4}
 	);
 
 	$self->{zone_map}[4] = WSMud::Room->new(
 	  id          => 4,
-		brief 			=> 'Yellow room',
-		description	=> 'This is a big yellow room. Everything in the room is yellow.',
+		brief 			=> 'Orange room',
+		description	=> 'This is a big orange room. Everything in the room is orange.',
+		color				=> 'orange',
 		exits				=> {'w' => 1, 'n' => 3}
 	);	
 }
