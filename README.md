@@ -9,8 +9,8 @@ It doesen't implement any persistence, so the players are created and destroyed 
 
 Clone this repo and download the 'Mojo' dependencies
 ```
-git submodules init
-git submodules update
+git submodule init
+git submodule update
 ```
 ##USAGE
 
