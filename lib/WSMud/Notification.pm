@@ -13,8 +13,9 @@ sub encode
   my $json = Mojo::JSON->new;
   
   my $notification = { 
-  	type => $self->{type}, 
-  	text => $self->{text},
+  	type  => $self->{type}, 
+  	text  => $self->{text},
+  	value => $self->{value},
   };  
   
   $notification->{color} = $self->{color} if exists $self->{color};
