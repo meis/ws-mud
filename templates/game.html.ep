@@ -27,12 +27,10 @@
             <div id="console" class="box"></div>
             <input type="text" id="console-input" />
         </div>
-        <div class="span3">          
-	        <div class="box">
-	          <h3 class="box-title">Widget 1</h3>
-	          <div class="box-content">
-	            This is a test widget
-	          </div>
+        <div id="widget-conainer"class="span3">          
+	        <div id="widget-userlist" class="box">
+	          <h3 class="box-title"></h3>
+	          <div class="box-content"></div>
 	        </div>
         </div>
       </div>

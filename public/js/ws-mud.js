@@ -76,20 +76,60 @@ $(function () {
     $('#connection-switcher span').html("Connect");   
   }
   
+  WSMud_connection_switcher.switch_connection = function () {    
+    if (ws.readyState == 1) 
+  		ws.close();
+  	else
+  		WSMud.create_socket();   
+  }
+  
   WSMud_connection_switcher.listenTo(WSMud, { 
     "connect"     : WSMud_connection_switcher.connected,
     "disconnect"  : WSMud_connection_switcher.disconnected,
   });
   
   $('#connection-switcher').click(function (e) {
-  	if (ws.readyState == 1) 
-  		ws.close();
-  	else
-  		WSMud.create_socket();    
+    WSMud_connection_switcher.switch_connection();
   });
   
+  // USER LIST MODULE
+	var WSMud_user_list = {};
+	WSMud_user_list.users = [];
+  _.extend(WSMud_user_list, Backbone.Events);
   
-
-
-
+  WSMud_user_list.render = function (notification) {   
+    $("#widget-userlist h3").html("WHO");
+    $("#widget-userlist div").html("<ul></ul>");
+    
+    WSMud_user_list.users = _.uniq(WSMud_user_list.users);
+    WSMud_user_list.users.sort();
+    
+    for (i = 0; i < WSMud_user_list.users.length; ++i) {
+      $("#widget-userlist div ul").append("<li>" + WSMud_user_list.users[i] + "</li>");
+    }
+  }
+  
+  WSMud_user_list.add_user = function (notification) {   
+    WSMud_user_list.users = _.union(WSMud_user_list.users, notification.value.split(" "));
+    WSMud_user_list.render();
+  }
+  
+  WSMud_user_list.rem_user = function (notification) {        
+    WSMud_user_list.users = _.without(WSMud_user_list.users, notification.value);
+    WSMud_user_list.render();
+  }
+  
+  WSMud_user_list.rem_all = function (notification) {     
+	  WSMud_user_list.users = [];
+    WSMud_user_list.render();
+  }
+  
+  WSMud_user_list.listenTo(WSMud, { 
+    "who"         : WSMud_user_list.add_user,
+    "login"       : WSMud_user_list.add_user,
+    "logout"      : WSMud_user_list.rem_user,
+    "connect"     : WSMud_user_list.render,
+    "disconnect"  : WSMud_user_list.rem_all,
+  });
+  
 });
