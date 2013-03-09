@@ -59,6 +59,7 @@ $(function () {
     "room:glance" : WSMud_console.update,
     "room:look"   : WSMud_console.update,
     "room:players": WSMud_console.update,
+    "help"        : WSMud_console.update,
     "error"       : WSMud_console.update
   });   
 
