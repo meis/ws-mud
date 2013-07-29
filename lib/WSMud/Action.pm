@@ -1,7 +1,6 @@
 package WSMud::Action;
 use Moose;
 use Try::Tiny;
-use Data::Dump qw(pp);
 
 #TODO: Need some metaprograming or a way to register actions here...
 sub dispatch {
@@ -32,7 +31,7 @@ sub action_say {
 	shift @$call;
 	my $msg = join(" ", @$call);
 	$world->notify_player( $player, WSMud::Notification->new({ type => 'message', text => "You say: $msg"}) );				
-	$world->notify_room( $player, WSMud::Notification->new({ type => 'message', text => "$player->name says: $msg"}) );
+	$world->notify_room( $player, WSMud::Notification->new({ type => 'message', text => $player->name . " says: $msg"}) );
 }
 
 sub action_look {	

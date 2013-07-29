@@ -8,19 +8,17 @@ has 'positions'      => ( is => 'rw', isa => 'HashRef' , default => sub { {} } )
 sub enter {
     my ($self, $player) = @_;
 
-    my $player_name = $player->{name};
-
     if ( $self->is_online($player) ) {
-        $self->notify_player($player, type => 'error', text => "This user is active, please choose another one.");
+        $self->notify_player( $player, WSMud::Notification->new({ type => 'error', text => "This user is active, please choose another one." }) );
         $self->disconnect($player);
     }
     else {
         $self->add_player($player);
-        $self->notify_player($player, type => 'message', text => "Welcome to the game, ". $player_name . ".");
-        $self->notify_player($player, type => 'message', text => "If you don't know what to do, type 'help'");
-        $self->notify_player($player, type => 'who', value => $self->who);
-        $self->notify_all($player, type => 'message', text => "[$player_name enters the game.]");
-        $self->notify_all($player, type => 'login', value => $player_name);
+        $self->notify_player( $player, WSMud::Notification->new({ type => 'message', text => "Welcome to the game, ". $player->name . "." }) );
+        $self->notify_player( $player, WSMud::Notification->new({ type => 'message', text => "If you don't know what to do, type 'help'" }) );
+        #$self->notify_player( $player, WSMud::Notification->new({ type => 'who', value => $self->who }) );
+        $self->notify_all( $player, WSMud::Notification->new({ type => 'message', text => "[" . $player->name . " enters the game]" }) );
+        $self->notify_all( $player, WSMud::Notification->new({ type => 'login', value => $player->name }) );
         $self->enter_room($player, $self->initial_room($player));
     }
 }
@@ -28,9 +26,9 @@ sub enter {
 sub left {
     my ($self, $player) = @_;
 
-    $self->notify_player($player, type => 'message', text => "Goodbye.");
-    $self->notify_all(undef, type => 'message', text => "[" . $player->{name}. " left the game.]");
-    $self->notify_all($player, type => 'logout', value => $player->{name});
+    $self->notify_player( $player, WSMud::Notification->new({ type => 'message', text => "Goodbye." }) );
+    $self->notify_all( 0, WSMud::Notification->new({ type => 'message', text => "[" . $player->name. " left the game]" }) );
+    $self->notify_all( $player, WSMud::Notification->new({ type => 'logout', value => $player->name }) );
     $self->rem_player($player);
     $self->disconnect($player)
 }
@@ -50,19 +48,19 @@ sub disconnect {
 sub add_player {
     my ($self, $player) = @_;
 
-    $self->online_players->{$player->{name}} = $player;
+    $self->online_players->{$player->name} = $player;
 }
 
 sub rem_player {
     my ($self, $player) = @_;
 
-    delete $self->online_players->{$player->{name}};
+    delete $self->online_players->{$player->name};
 }
 
 sub is_online {
     my ($self, $player) = @_;
 
-    exists $self->online_players->{$player->{name}};
+    exists $self->online_players->{$player->name};
 }
 
 # As we don't have persistent layer we need to start ever at the same point.
@@ -75,7 +73,7 @@ sub initial_room {
 sub get_player_room {
    my ($self, $player) = @_;
 
-   $self->get_room($self->positions->{$player->{name}});
+   $self->get_room($self->positions->{$player->name});
 }
 
 sub get_room {
@@ -110,8 +108,8 @@ sub look_room {
 
     my $room = $self->get_player_room($player);
 
-    $self->notify_player($player, type => 'room:glance', text => $room->glance, color => $room->{color});
-    $self->notify_player($player, type => 'room:look', text => $room->look);
+    $self->notify_player( $player, WSMud::Notification->new({ type => 'room:glance', text => $room->glance, color => $room->{color} }) );
+    $self->notify_player( $player, WSMud::Notification->new({ type => 'room:look', text => $room->look }) );
     $self->notify_players_in_room($player, $room);
 }
 
@@ -122,18 +120,17 @@ sub move {
 	    my $room = $self->get_player_room($player);
 	
 	    if ( $room->{exits}{$direction} ) {
-  	        $self->notify_room($player, type => 'message', text => "$player->{name} goes to $direction.");
 	        my $destination_room = $self->get_room($room->{exits}{$direction});
-	        $self->enter_room($player, $destination_room);
-	
-	        $self->notify_room($player, type => 'message', text => "$player->{name} arrives from " . $self->from_direction($room, $destination_room) . ".");	
+  	        $self->notify_room( $player, WSMud::Notification->new({ type => 'message', text => $player->name . " goes to $direction." }) );
+	        $self->enter_room( $player, $destination_room );
+	        $self->notify_room( $player, WSMud::Notification->new({ type => 'message', text => $player->name . " arrives from " . $self->from_direction($room, $destination_room) . "." }) );	
   	    }
   	    else {
-  	        $self->notify_player($player, type => 'error', text => "There's no exit by that way");
+  	        $self->notify_player( $player, WSMud::Notification->new({ type => 'error', text => "There's no exit by that way" }) );
   	    }
 	}
 	else {
-        $self->notify_player($player, type => 'error', text => 'Move where??');
+        $self->notify_player( $player, WSMud::Notification->new({ type => 'error', text => 'Move where??' }) );
 	}
 }
 
@@ -141,10 +138,10 @@ sub from_direction {
     my ($self, $origin_room, $destination_room) = @_;
 
     my $direction = "nowhere";
-    my %exits = %{$destination_room->{exits}};
+    my %exits = %{$destination_room->exits};
 
     for ( keys %exits ) {
-        if ( $exits{$_} == $origin_room->{id} ) {
+        if ( $exits{$_} == $origin_room->id ) {
             $direction = $_;
         }
     }
@@ -155,33 +152,33 @@ sub from_direction {
 sub update_position {
     my ($self, $player, $room) = @_;
 
-    $self->positions->{$player->{name}} = $room->{id};
+    $self->positions->{$player->name} = $room->id;
 }
 
 sub notify_player {
-    my ($self, $player, %notification) = @_;
-    $player->notify(%notification);
+    my ($self, $player, $notification) = @_;
+    $player->notify($notification);
 }
 
 # Notify all players in world, except the player who notifies.
 sub notify_all {
-    my ($self, $player, %notification) = @_;
+    my ($self, $player, $notification) = @_;
 
     for ( values %{$self->online_players} ) {
-        $self->notify_player($_, %notification) unless ($_ eq $player);
+        $self->notify_player($_, $notification) unless ($_ eq $player);
     }
 }
 
 # Notify all players in room, except the player who notifies.
 sub notify_room {
-    my ($self, $player, %notification) = @_;
+    my ($self, $player, $notification) = @_;
 
-    my $room_id = $self->positions->{$player->{name}};
+    my $room_id = $self->positions->{$player->name};
     my $room    = $self->zone_map->[$room_id];
-    my @players = $self->players_in_room($room); 
+    my @players = $self->players_in_room($room);
 
     for ( values @players ) {
-        $self->notify_player($_, %notification) unless ($_ eq $player);
+        $self->notify_player($_, $notification) unless ($_ eq $player);
     }
 }
 
@@ -191,7 +188,8 @@ sub notify_players_in_room {
     my @players = $self->players_in_room($room);
 
     for (values @players) {
-        $self->notify_player($player, type => 'room:players', text => "$_->{name} is here.") unless ($_ eq $player);
+        $self->notify_player( $player, WSMud::Notification->new({ type => 'room:players', text => "$_->{name} is here." }) )
+            unless ($_ eq $player);
     }
 }
 

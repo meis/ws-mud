@@ -16,23 +16,19 @@ sub BUILD {
 }
 
 sub init_connection {
-    my $self    = shift;
-    # For closure purposes.
-    my $player  = $self;
-    my $world   = $player->{world};
+    my $self = shift;
 
     $self->{connection}->on(message =>
-        sub {$world->dispatch_action($player, $_[1])}
+        sub { $self->world->dispatch_action( $self, WSMud::Notification->decode($_[1]) ) }
     );
 
     $self->{connection}->on(finish =>
-        sub {$world->left($player)}
+        sub { $self->world->left($self) }
     );
 }
 
-sub notify { 
-    my ($self, %attrs) = @_;
-    my $notification = WSMud::Notification->new(%attrs);
+sub notify {
+    my ($self, $notification) = @_;
 
     $self->connection->send($notification->encode);
 }

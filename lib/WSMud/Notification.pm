@@ -21,10 +21,10 @@ sub encode {
 }
 
 sub decode {
-    my ($self, $notification) = @_;
+    my ($class, $notification) = @_;
 
     my $json = Mojo::JSON->new;
-    return $json->decode($notification);
+    return $class->new( $json->decode($notification) );
 }
 
 1;
