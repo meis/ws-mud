@@ -1,12 +1,10 @@
 #!/usr/bin/perl
 
+use strict;
+use warnings;
+
 use FindBin;
-die "You need to run 'git submodule update --init' to fetch the example requirements\n"
-  unless -d "$FindBin::Bin/mojo/lib";
-
-use lib "$FindBin::Bin/mojo/lib";
 use lib "lib";
-
 use Mojolicious::Lite;
 use WSMud;
 
@@ -15,26 +13,22 @@ use WSMud;
 my $world = WSMud::World->new();
 
 get '/' => sub {
-  my $self = shift;
-  $self->render('index');
+    my $self = shift;
+    $self->render('index');
 };
 
 get '/player/:player_name' => sub {
-  my $self = shift;  
-  my $player_name = $self->param('player_name');
-  
-  $self->render('game', player_name => $player_name);
+    my $self        = shift;
+    my $player_name = $self->param('player_name');
+
+    $self->render( 'game', player_name => $player_name );
 };
 
 websocket '/mud/:player_name' => sub {
-  my $self = shift;
-  Mojo::IOLoop->stream($self->tx->connection)->timeout(300);
-  my $player = WSMud::Player->new($self->param('player_name'), $world, $self);
+    my $self = shift;
+    Mojo::IOLoop->stream( $self->tx->connection )->timeout(300);
+    my $player =
+    WSMud::Player->new( $self->param('player_name'), $world, $self );
 };
 
 app->start;
-
-1;
-
-
-

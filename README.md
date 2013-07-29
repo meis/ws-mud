@@ -7,16 +7,13 @@ It doesen't implement any persistence, so the players are created and destroyed 
 
 ##INSTALL
 
-Clone this repo and download the 'Mojo' dependencies
-```
-git submodule init
-git submodule update
-```
+Clone this repo. You need Mojolicious::Lite installed.
+
 ##USAGE
 
 You can start the server using:
 ```
-perl ws-mud
+morbo ws-mud
 ```
 
 Then, you can start playing going to http://localhost:3000/player/your_name (Next comming...login screen!).
