@@ -1,24 +1,22 @@
 package WSMud::Room;
+use Moose;
 
-sub new 
-{
-  my ($class, %attrs) = @_;
+has 'id'          => ( is => 'ro', isa => 'Int'    , required => 1 );
+has 'brief'       => ( is => 'ro', isa => 'Str'    , required => 1 );
+has 'description' => ( is => 'ro', isa => 'Str'    , required => 1 );
+has 'color'       => ( is => 'ro', isa => 'Str'    , required => 1 );
+has 'exits'       => ( is => 'ro', isa => 'HashRef', required => 1 );
 
-  bless \%attrs, $class;
+sub glance {
+    my $self = shift;
+
+    $self->{brief} . ' [' . join(", ", keys %{$self->{exits}}) . ']';
 }
 
-sub glance
-{
-  my $self = shift;
-  
-  $self->{brief} . ' [' . join(", ", keys %{$self->{exits}}) . ']';  
-}
+sub look {
+    my $self = shift;
 
-sub look
-{
-  my $self = shift;
-  
-  $self->{description};  
+    $self->{description};
 }
 
 1;

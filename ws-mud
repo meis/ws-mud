@@ -27,8 +27,11 @@ get '/player/:player_name' => sub {
 websocket '/mud/:player_name' => sub {
     my $self = shift;
     Mojo::IOLoop->stream( $self->tx->connection )->timeout(300);
-    my $player =
-    WSMud::Player->new( $self->param('player_name'), $world, $self );
+    my $player = WSMud::Player->new(
+        name       => $self->param('player_name'),
+        world      => $world,
+        connection => $self,
+    );
 };
 
 app->start;

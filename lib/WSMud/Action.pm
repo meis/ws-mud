@@ -1,63 +1,49 @@
 package WSMud::Action;
-
+use Moose;
 use feature 'switch';
 
 #TODO: Need some metaprograming or a way to register actions here...
-sub dispatch
-{
-  my $self    			= shift;  
-  my $world					= shift;
-  my $player        = shift;
-  my $notification	= WSMud::Notification->decode(shift);
-  
-  my $type 	= $notification->{type};
-  
-  my @call = split(" ", $notification->{text});
-  
-  for ($type)
-  {
-  	when('cmd')
-  	{
-  		for ($call[0])
-  		{
-  			when('help') 
-  			{
-  				$self->action_help($world, $player, @call);	
-  			}
-  			when('say') 
-  			{
-  				$self->action_say($world, $player, @call);	
-  			}
-  			when('move') 
-  			{
-  				$self->action_move($world, $player, @call);
-  			}
-  			when('look') 
-  			{
-  				$self->action_look($world, $player, @call);
-  			}  			
-  			when('quit') 
-  			{
-  				$self->action_quit($world, $player, @call);
-  			}
-  			default
-  			{
-  				$self->action_default($world, $player, @call);
-  			}
-  		}
-  				
-  	}
-  }
+sub dispatch {
+    my $self    	 = shift;
+    my $world		 = shift;
+    my $player       = shift;
+    my $notification = WSMud::Notification->decode(shift);
+
+    my $type = $notification->{type};
+    my @call = split(" ", $notification->{text});
+
+    for ($type) {
+        when('cmd') {
+            for ($call[0]) {
+                when('help') {
+                    $self->action_help($world, $player, @call);	
+                }
+                when('say') {
+                    $self->action_say($world, $player, @call);	
+                }
+                when('move') {
+                    $self->action_move($world, $player, @call);
+                }
+                when('look') {
+                    $self->action_look($world, $player, @call);
+                }		
+                when('quit') {
+                    $self->action_quit($world, $player, @call);
+                }
+                default {
+                    $self->action_default($world, $player, @call);
+                }
+  		    }			
+  	    }
+    }
 }
 
-sub action_help 
-{	
-  my ($self, $world, $player, @call) = @_;
+sub action_help {	
+    my ($self, $world, $player, @call) = @_;
 	$world->notify_player($player, type => 'help', text => "Available commands: help say move look quit.");
 }
 
-sub action_say
-{
+sub action_say {
 	my ($self, $world, $player, @call) = @_;
 	shift @call;
 	my $msg = join(" ", @call);
@@ -65,28 +51,24 @@ sub action_say
 	$world->notify_room($player, type => 'message', text => "$player->{name} says: $msg");
 }
 
-sub action_look 
-{	
-  my ($self, $world, $player, @call) = @_;
-  $world->look_room($player);
+sub action_look {	
+    my ($self, $world, $player, @call) = @_;
+    $world->look_room($player);
 }
 
-sub action_move
-{
-  my ($self, $world, $player, @call) = @_;
-  $world->move($player, $call[1]);
+sub action_move {
+    my ($self, $world, $player, @call) = @_;
+    $world->move($player, $call[1]);
 }
 
-sub action_quit
-{
-  my ($self, $world, $player, @call) = @_;
-	$world->left($player);	
+sub action_quit {
+    my ($self, $world, $player, @call) = @_;
+    $world->left($player);	
 }
 
-sub action_default
-{
-  my ($self, $world, $player, @call) = @_;
-	$world->notify_player($player, type => 'error', text => "Command not found. Try 'help'.");
+sub action_default {
+    my ($self, $world, $player, @call) = @_;
+    $world->notify_player($player, type => 'error', text => "Command not found. Try 'help'.");
 }
 
 1;
